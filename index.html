@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Ball Survival</title>
+  <meta name="description" content="A neon arcade survival game: dodge enemies, collect coins and survive as long as you can.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-state="menu">
+  <div id="app">
+
+    <!-- ===================== HUD (heads-up display) ===================== -->
+    <header class="hud" id="hud">
+      <div class="hud-row">
+        <div class="hud-group">
+          <div class="hud-stat" id="hud-score-stat">
+            <span class="hud-label">Score</span>
+            <span class="hud-value" id="hud-score">0</span>
+          </div>
+          <div class="hud-stat" id="hud-coins-stat">
+            <span class="hud-label">Coins</span>
+            <span class="hud-value hud-value--gold"><span class="coin-icon" aria-hidden="true"></span><span id="hud-coins">0</span></span>
+          </div>
+        </div>
+
+        <div class="hud-group hud-group--center">
+          <div class="hud-stat hud-stat--center">
+            <span class="hud-label">Survival time</span>
+            <span class="hud-value hud-value--large" id="hud-time">0:00</span>
+          </div>
+          <div class="hud-stat hud-stat--center">
+            <span class="hud-label">Level</span>
+            <span class="hud-value hud-value--level" id="hud-level">1</span>
+          </div>
+        </div>
+
+        <div class="hud-group hud-group--right">
+          <div class="hud-stat">
+            <span class="hud-label">Lives</span>
+            <div class="lives" id="hud-lives" aria-label="Lives remaining"></div>
+          </div>
+          <div class="hud-stat">
+            <span class="hud-label">Dash</span>
+            <div class="dash-meter" id="hud-dash"><div class="dash-fill" id="hud-dash-fill"></div></div>
+          </div>
+          <div class="hud-buttons">
+            <button class="icon-btn" data-action="mute" title="Mute / unmute (M)" aria-label="Mute or unmute sound">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path class="speaker" d="M4 9h4l5-4v14l-5-4H4z"/>
+                <g class="waves"><path d="M16 9.5a3.5 3.5 0 0 1 0 5"/><path d="M18.5 7a7 7 0 0 1 0 10"/></g>
+                <g class="cross"><path d="M16 9l5 6"/><path d="M21 9l-5 6"/></g>
+              </svg>
+            </button>
+            <button class="icon-btn" id="pause-btn" title="Pause (Esc / P)" aria-label="Pause game">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Second HUD row: combo meter and active power-ups -->
+      <div class="hud-status">
+        <div class="combo" id="hud-combo" hidden>
+          <span class="combo-label">Combo</span>
+          <span class="combo-value" id="hud-combo-value">x2</span>
+          <span class="combo-bar"><span class="combo-fill" id="hud-combo-fill"></span></span>
+        </div>
+        <div class="powerup-chips" id="hud-powerups"></div>
+      </div>
+    </header>
+
+    <!-- ===================== Game stage ===================== -->
+    <main class="stage" id="stage">
+      <canvas id="game-canvas"></canvas>
+
+      <div class="announcement" id="announcement">
+        <div class="announcement-title" id="announcement-title"></div>
+        <div class="announcement-subtitle" id="announcement-subtitle"></div>
+      </div>
+      <div class="countdown" id="countdown" aria-live="assertive"></div>
+      <div class="toasts" id="toasts" aria-live="polite"></div>
+
+      <div class="controls-hint">
+        <span><kbd>WASD</kbd>/<kbd>Arrows</kbd> move</span>
+        <span><kbd>Space</kbd> dash</span>
+        <span><kbd>P</kbd> pause</span>
+        <span><kbd>M</kbd> mute</span>
+      </div>
+    </main>
+
+    <!-- ===================== Start screen ===================== -->
+    <section class="overlay" id="start-screen" aria-label="Main menu">
+      <div class="panel panel--wide">
+        <h1 class="title">
+          <span class="title-top">Neon Ball</span>
+          <span class="title-bottom">Survival</span>
+        </h1>
+        <p class="tagline">Dodge the hunters. Grab the gold. Survive the neon.</p>
+
+        <div class="menu-grid">
+          <div class="menu-column">
+            <h2 class="section-title">Difficulty</h2>
+            <div class="segmented" role="group" aria-label="Difficulty">
+              <button class="segment" data-difficulty="easy">Easy</button>
+              <button class="segment" data-difficulty="normal">Normal</button>
+              <button class="segment" data-difficulty="hard">Hard</button>
+            </div>
+            <p class="difficulty-note" id="difficulty-note"></p>
+
+            <button class="btn btn--primary btn--large" id="play-btn">Play</button>
+            <p class="hint">or press <kbd>Enter</kbd></p>
+
+            <h2 class="section-title">Best runs <span class="section-tag" id="best-difficulty-label">Normal</span></h2>
+            <div class="records">
+              <div class="record"><span class="record-label">Score</span><span class="record-value" id="best-score">0</span></div>
+              <div class="record"><span class="record-label">Time</span><span class="record-value" id="best-time">0:00</span></div>
+              <div class="record"><span class="record-label">Coins</span><span class="record-value" id="best-coins">0</span></div>
+            </div>
+
+            <h2 class="section-title">Controls</h2>
+            <ul class="controls-list">
+              <li><span class="keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or <kbd>&uarr;</kbd><kbd>&larr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd></span><span>Move</span></li>
+              <li><span class="keys"><kbd>Space</kbd> or <kbd>Shift</kbd></span><span>Dash (brief invulnerability)</span></li>
+              <li><span class="keys"><kbd>Esc</kbd> or <kbd>P</kbd></span><span>Pause / resume</span></li>
+              <li><span class="keys"><kbd>M</kbd></span><span>Mute / unmute</span></li>
+            </ul>
+          </div>
+
+          <div class="menu-column">
+            <h2 class="section-title">Field guide</h2>
+            <!-- Filled in by script.js using the same drawing code as the game -->
+            <div class="field-guide" id="field-guide"></div>
+          </div>
+        </div>
+
+        <button class="text-btn" data-action="mute">
+          <span class="mute-label">Sound: on</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===================== Pause screen ===================== -->
+    <section class="overlay hidden" id="pause-screen" aria-label="Paused">
+      <div class="panel panel--narrow">
+        <h2 class="screen-title">Paused</h2>
+        <p class="screen-subtitle">Take a breath. The arena will wait.</p>
+        <div class="button-stack">
+          <button class="btn btn--primary" id="resume-btn">Resume</button>
+          <button class="btn" id="restart-btn">Restart run</button>
+          <button class="btn btn--ghost" id="pause-menu-btn">Main menu</button>
+        </div>
+        <ul class="controls-list controls-list--compact">
+          <li><span class="keys"><kbd>WASD</kbd> / <kbd>Arrows</kbd></span><span>Move</span></li>
+          <li><span class="keys"><kbd>Space</kbd> / <kbd>Shift</kbd></span><span>Dash</span></li>
+          <li><span class="keys"><kbd>Esc</kbd> / <kbd>P</kbd></span><span>Resume</span></li>
+          <li><span class="keys"><kbd>M</kbd></span><span>Mute</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== Game over screen ===================== -->
+    <section class="overlay hidden" id="gameover-screen" aria-label="Game over">
+      <div class="panel">
+        <h2 class="screen-title screen-title--danger">Game Over</h2>
+        <p class="screen-subtitle" id="gameover-subtitle"></p>
+        <div class="results">
+          <div class="result result--highlight">
+            <span class="result-label">Final score</span>
+            <span class="result-value" id="final-score">0</span>
+            <span class="badge" id="best-score-badge" hidden>New best!</span>
+          </div>
+          <div class="result">
+            <span class="result-label">Coins</span>
+            <span class="result-value result-value--gold" id="final-coins">0</span>
+            <span class="badge" id="best-coins-badge" hidden>New best!</span>
+          </div>
+          <div class="result">
+            <span class="result-label">Survived</span>
+            <span class="result-value" id="final-time">0:00</span>
+            <span class="badge" id="best-time-badge" hidden>New best!</span>
+          </div>
+          <div class="result">
+            <span class="result-label">Level reached</span>
+            <span class="result-value" id="final-level">1</span>
+          </div>
+          <div class="result">
+            <span class="result-label">Enemies destroyed</span>
+            <span class="result-value" id="final-kills">0</span>
+          </div>
+        </div>
+        <div class="button-row">
+          <button class="btn btn--primary" id="play-again-btn">Play again</button>
+          <button class="btn btn--ghost" id="gameover-menu-btn">Main menu</button>
+        </div>
+        <p class="hint">Press <kbd>Enter</kbd> to play again</p>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

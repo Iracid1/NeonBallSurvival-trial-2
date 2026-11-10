@@ -1,0 +1,440 @@
+===============================================================================
+GAME DEVELOPMENT SPECIFICATION — NEON BALL SURVIVAL
+===============================================================================
+
+1. PROJECT OVERVIEW
+-------------------------------------------------------------------------------
+Create a complete, playable 2D arcade survival game called Neon Ball Survival.
+
+The player controls a glowing ball inside an enclosed arena. The goal is to
+survive for as long as possible, collect coins, avoid enemies, collect
+power-ups, and achieve the highest score possible.
+
+The game should feel like a polished arcade game rather than a basic school
+demonstration. I want smooth movement, satisfying feedback, interesting
+mechanics, clean visuals, and an engaging gameplay loop.
+
+You have creative freedom to improve the concept and introduce your own ideas.
+Think like a game designer, not just a programmer. You may add original
+mechanics, visual effects, animations, sound effects, UI improvements, enemy
+types, or other features that make the game more fun.
+
+However, your additions must support the main gameplay, remain appropriate for
+a student project, and not make the game unnecessarily complicated.
+
+
+2. TECHNOLOGY AND COMPATIBILITY
+-------------------------------------------------------------------------------
+- Build the game as a browser-based 2D game using HTML, CSS, and JavaScript.
+- Use HTML Canvas for rendering the game world.
+- Keep the project easy to open, run, test, and understand in VS Code.
+- Prefer a simple project structure with index.html, style.css, and script.js.
+- Avoid requiring a backend, database, paid services, API keys, or complicated
+  installation steps.
+- Use standard browser functionality wherever possible.
+- The game should run locally by opening index.html or using VS Code's Live
+  Server extension.
+- Make sure the game works on a typical desktop or laptop browser.
+- Do not use external assets unless they are genuinely useful. Prefer drawing
+  the ball, enemies, coins, arena, and effects directly with Canvas.
+- If you choose to use a library, keep the setup simple and explain why it is
+  needed.
+
+
+3. VISUAL DESIGN AND ART DIRECTION
+-------------------------------------------------------------------------------
+Create a clean, modern neon arcade aesthetic.
+
+The visual style should include:
+- A dark background that makes the gameplay elements stand out.
+- A clearly defined arena with visible boundaries.
+- A bright, glowing player ball.
+- Coins that are easy to distinguish from enemies and power-ups.
+- Enemies with visually distinct appearances.
+- A readable HUD displaying important information.
+- Subtle glow effects, particles, and animations where appropriate.
+- A consistent colour palette and professional-looking menus.
+
+Use colour intentionally. For example, cyan or blue could represent the player,
+gold could represent coins, red could represent danger, and purple could
+represent special abilities.
+
+These are suggestions, not strict limitations. You may choose a better visual
+direction if it improves the game's identity.
+
+The interface should look intentional and polished, not like a collection of
+randomly placed shapes and text.
+
+
+4. CORE GAMEPLAY REQUIREMENTS
+-------------------------------------------------------------------------------
+All of the following features are mandatory.
+
+A. Player Movement
+- The player controls a ball using WASD or the arrow keys.
+- Both control schemes must work.
+- Movement should feel smooth and responsive.
+- Movement should work diagonally without giving the player an unintended
+  speed advantage.
+- The ball must remain inside the arena.
+- The ball should have a subtle visual trail or another suitable movement
+  effect.
+- Prevent movement bugs caused by holding keys, losing focus, or pressing
+  multiple keys simultaneously.
+
+B. Wall Collisions
+- The arena must have clear boundaries.
+- The player must not leave the arena.
+- The ball should bounce off the walls in a way that feels consistent and
+  satisfying.
+- Wall collisions must not cause the ball to become stuck or clip through the
+  arena boundaries.
+- Decide whether to use physical bouncing or boundary containment for player
+  movement, whichever produces better gameplay. If the ball bounces, preserve
+  the intended movement direction where appropriate.
+
+C. Coin Collection
+- Coins must spawn at random positions throughout the arena.
+- Coins must not spawn outside the arena or directly on top of the player.
+- Collecting a coin increases the player's score.
+- Coins should disappear when collected and produce visual feedback.
+- Use a reasonable limit on the number of coins active at once.
+- Coins should respawn over time so the player always has something to pursue.
+- Add a counter that clearly displays the player's collected coins.
+
+D. Enemies
+- Enemies must spawn and chase the player.
+- Their movement should be smooth, and they should actively attempt to reach
+  the player's position.
+- Enemies must stay within the arena.
+- Contact with an enemy should damage the player.
+- Prevent the player from losing all three lives almost instantly because
+  several enemies overlap.
+- Add a brief damage cooldown or temporary invulnerability after being hit.
+- Give enemies a distinct appearance so they cannot be confused with coins or
+  power-ups.
+- Use multiple enemy types or behaviours if you can implement them reliably.
+
+E. Health and Lives
+- The player begins with three lives.
+- Enemy contact removes one life when the damage rules allow it.
+- Display the remaining lives clearly, using icons, symbols, or another
+  readable visual indicator.
+- Provide clear visual feedback when the player takes damage.
+- When the player has no lives remaining, end the current run.
+- Health rules should be consistent and easy to understand.
+
+F. Power-Ups
+Add temporary power-ups that spawn periodically in the arena.
+
+Include at least three distinct power-up types. Possible examples include:
+- Shield: Prevents enemy damage for a limited time.
+- Speed Boost: Temporarily increases movement speed.
+- Coin Magnet: Attracts nearby coins toward the player.
+
+You may invent better power-ups or add more if they improve the gameplay.
+
+Requirements:
+- Each power-up must have a recognisable appearance.
+- Each must have a clear effect and duration.
+- Show a visual indicator while a temporary ability is active.
+- Communicate when an ability activates and expires.
+- Prevent effects from becoming permanently active due to timer bugs.
+- Ensure that simultaneous power-ups work correctly.
+
+G. Speed Boost
+Implement a speed boost as a temporary ability, either through a power-up or
+another suitable mechanic.
+- Increase the player's movement speed for a defined duration.
+- Make the effect noticeable through movement or visual feedback.
+- Return the player to their normal speed when the effect ends.
+- Avoid stacking speed multipliers indefinitely.
+- If the speed boost power-up overlaps with another speed-related effect,
+  handle it predictably.
+
+H. Increasing Difficulty
+The game should become harder as the player survives longer.
+
+Possible ways to increase difficulty include:
+- Gradually increasing enemy movement speed.
+- Increasing enemy spawn frequency.
+- Introducing additional enemy types.
+- Changing coin or power-up spawn timing carefully.
+- Introducing special enemies or arena events at later stages.
+
+Use a gradual progression curve. The game should be approachable at the
+beginning but become increasingly challenging.
+
+Do not make difficulty increase so aggressively that survival becomes unfair or
+impossible after only a short period.
+
+I. Game Over and Restart
+When the player loses all three lives:
+- Stop normal gameplay.
+- Display a clear game-over screen.
+- Show the final coin score and survival time.
+- Provide a restart button.
+- Restart the game without refreshing the browser.
+- Reset the player's lives, score, timers, enemies, power-ups, and other
+  run-specific state.
+- Ensure that restarting does not create duplicate animation loops, event
+  listeners, or spawning timers.
+- Allow the player to begin a new run immediately.
+
+J. Score and Survival Time
+In addition to the coin counter:
+- Track how long the player survives.
+- Display survival time in a readable format.
+- Show the final results on the game-over screen.
+- Reward the player for collecting coins and surviving longer through the
+  gameplay systems.
+- If useful, include a high score or best survival time saved locally in the
+  browser.
+
+If you implement persistent records, handle missing or invalid saved data
+safely.
+
+
+5. ADDITIONAL CREATIVE FEATURES
+-------------------------------------------------------------------------------
+You are encouraged to introduce your own ideas beyond the mandatory
+requirements.
+
+Aim for at least 6-10 additional features in total, counting the mandatory
+features separately.
+
+Potential additions include:
+- A start menu with a Play button.
+- A pause menu.
+- A high-score system.
+- Different enemy behaviours.
+- A rare coin worth bonus points.
+- Combo bonuses for collecting several coins quickly.
+- A dash ability with a cooldown.
+- Screen shake or particle effects when damage occurs.
+- Increasingly intense music or visual effects as difficulty rises.
+- A short countdown before gameplay begins.
+- A difficulty selection option.
+- Achievements for reaching milestones.
+- A temporary slow-motion ability.
+- An arena event that changes the way the player must move.
+- A results screen with a replay option.
+
+These are examples rather than a rigid checklist. Choose features that fit the
+game and work well together.
+
+Prioritise quality and functionality over adding lots of unfinished features.
+Every feature you implement should have a clear purpose.
+
+You may add other ideas that are not listed here if you believe they will make
+the game more enjoyable.
+
+
+6. USER INTERFACE AND CONTROLS
+-------------------------------------------------------------------------------
+The game should include a clean HUD that displays:
+- Current coin score.
+- Remaining lives.
+- Survival time.
+- Active power-ups and their remaining durations, where appropriate.
+- Current difficulty level or wave, if implemented.
+
+Also include:
+- A start screen or clear way to begin playing.
+- A pause function, preferably using Escape or P.
+- A visible indication of the controls.
+- A game-over screen.
+- A restart button.
+
+Make the interface readable at common laptop screen sizes.
+
+The game should adapt to different browser window sizes without stretching
+gameplay elements incorrectly or making controls unusable.
+
+If the browser window changes size, update the Canvas correctly and preserve
+the game's internal state.
+
+
+7. GAME FEEL AND POLISH
+-------------------------------------------------------------------------------
+Focus on making the game feel satisfying to play.
+
+Where appropriate, include:
+- Smooth animations.
+- Particle effects when collecting coins.
+- Clear feedback when taking damage.
+- Distinct visual effects for power-ups.
+- Subtle glowing effects.
+- Responsive buttons with hover and click feedback.
+- Small animations for score changes.
+- Clear transitions between menus and gameplay.
+
+Sound effects are optional. If you add them, ensure they do not prevent the
+game from starting when browser audio restrictions apply. Provide a way to
+mute sound.
+
+Do not sacrifice responsiveness or reliability for excessive visual effects.
+
+
+8. CODE QUALITY AND ORGANISATION
+-------------------------------------------------------------------------------
+Even though AI is generating the program, the code should be understandable to
+a student learning programming.
+
+Requirements:
+- Use meaningful variable and function names.
+- Organise the code into logical sections.
+- Separate important responsibilities into functions or classes where
+  appropriate.
+- Avoid unnecessary duplication.
+- Use comments to explain important logic, calculations, and non-obvious
+  decisions.
+- Avoid putting the entire game into one enormous, difficult-to-understand
+  function.
+- Use a consistent approach to managing game state.
+- Use a single reliable animation loop.
+- Clean up timers and temporary effects correctly.
+- Handle keyboard input reliably.
+- Prevent common collision, spawning, and restart bugs.
+- Avoid unnecessary complexity and overly abstract architecture.
+
+Do not add comments to every individual line. Comments should help explain the
+code rather than repeat what the code already says.
+
+
+9. TESTING AND RELIABILITY
+-------------------------------------------------------------------------------
+Before considering the game complete, review the implementation and test the
+following scenarios:
+
+ 1. The player can move using both WASD and arrow keys.
+ 2. Diagonal movement is not faster than normal movement.
+ 3. The player cannot escape the arena.
+ 4. Coins spawn correctly and increase the score when collected.
+ 5. Enemies chase the player and cause damage.
+ 6. Damage cooldowns work correctly.
+ 7. The player starts with exactly three lives.
+ 8. Power-ups activate and expire correctly.
+ 9. Difficulty increases gradually.
+10. The game ends when the player loses all lives.
+11. The restart button resets the game properly.
+12. Pause and resume work if implemented.
+13. Resizing the browser does not break gameplay.
+14. No obvious errors appear in the browser console.
+
+If you cannot run the game in your environment, be transparent about that
+limitation. Perform a careful code review and give me precise instructions for
+testing it locally instead of claiming tests passed when they did not.
+
+
+10. YOUR CREATIVE FREEDOM
+-------------------------------------------------------------------------------
+You have permission to make sensible design decisions without asking me to
+approve every small detail.
+
+You may:
+- Choose the exact arena design, colours, effects, and animations.
+- Invent additional power-ups and enemy types.
+- Adjust balancing values such as movement speed, spawn rates, and cooldown
+  durations.
+- Add original gameplay mechanics.
+- Improve the menus and HUD.
+- Make reasonable changes that improve the game's overall quality.
+
+Use your judgement to make the game feel like a cohesive, finished arcade
+experience.
+
+However:
+- Do not remove or ignore any mandatory feature.
+- Do not replace the survival game with a different genre.
+- Do not add complicated systems that provide little gameplay value.
+- Do not introduce paid dependencies or require API keys.
+- Do not make major changes to the core concept without a strong reason.
+- Do not leave important mechanics as placeholders or unfinished
+  demonstrations.
+
+If you make an important design decision that is not explicitly specified,
+choose the most reasonable option and briefly explain it in the project
+documentation.
+
+
+11. FINAL DELIVERABLES
+-------------------------------------------------------------------------------
+Generate all the files required for a working game.
+
+Provide:
+1. The complete source code.
+2. A working index.html entry point.
+3. A style.css file for the interface and layout.
+4. A script.js file containing the gameplay logic.
+5. A README.md explaining what the game is, its features, controls, and how to
+   run it.
+6. A SPECIFICATION.txt containing this original specification, or a clean copy
+   of it, so it can be included in my GitHub repository.
+
+If you create additional files, explain their purpose.
+
+Do not provide only code snippets or pseudocode. Generate the complete
+implementation.
+
+
+12. FINAL INSTRUCTIONS
+-------------------------------------------------------------------------------
+Build the best version of Neon Ball Survival that fits this specification.
+
+Before finishing, review the full project for missing requirements, broken
+gameplay loops, inconsistent controls, faulty restart logic, and obvious bugs.
+
+Make reasonable creative improvements where they will add value, while keeping
+the project suitable for a student to study and modify.
+
+Prioritise a complete, polished, playable game over an unnecessarily
+complicated one.
+
+When finished, provide a short summary of:
+- What was implemented.
+- Any additional features you invented.
+- How to run the game.
+- The controls.
+- Any known limitations or issues.
+
+Remember that the purpose is to create a fun game while keeping the code
+understandable enough for a student to learn from it.
+
+
+===============================================================================
+DEVELOPMENT ENVIRONMENT — IMPORTANT
+===============================================================================
+
+I am using Visual Studio Code to develop this game, and I want to play it in
+Google Chrome as a website.
+
+Required technologies
+- HTML for the website structure.
+- CSS for the design, menus, HUD, buttons, and layout.
+- JavaScript for all game mechanics.
+- HTML Canvas for rendering the 2D game.
+
+How the game must run
+- The main entry point must be index.html.
+- The project should contain index.html, style.css, and script.js, plus a
+  README.md and SPECIFICATION.txt.
+- I want to run the project locally in Chrome using the VS Code Live Server
+  extension.
+- I should be able to right-click index.html, select "Open with Live Server",
+  and have the game open in Chrome.
+- Do not use React, Node.js, npm, a backend server, build tools, or
+  complicated installation steps. Keep it to plain HTML, CSS, and JavaScript.
+- Do not require an internet connection for the game to work after the files
+  are created.
+- All gameplay must run directly in the browser.
+- Make the website fill the browser window and adapt to different screen
+  sizes.
+- Ensure keyboard controls work correctly in Chrome.
+- Include clear instructions in README.md explaining how to run the game in
+  VS Code.
+
+Final requirement
+Generate the complete, working source files, not just code snippets. Ensure
+all files work together and that the game can be launched through Live Server
+without additional setup.
